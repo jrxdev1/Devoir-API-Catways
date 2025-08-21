@@ -1,8 +1,7 @@
-// controllers/reservationController.js
 const Reservation = require('../models/Reservation');
 
 
-// GET toutes les réservations (tous les catways confondus)
+// Récupérer toutes les réservations (tous les catways confondus)
 
 const getAllReservations = async (req, res) => {
   try {
@@ -14,35 +13,21 @@ const getAllReservations = async (req, res) => {
 };
 
 
-// GET toutes les réservations d’un catway
+// Récupérer toutes les réservations d’un catway en particulier
 const getReservationsByCatway = async (req, res) => {
   try {
     const reservations = await Reservation.find({ catwayNumber: req.params.id });
+    
+    if (!reservations || reservations.length === 0) {
+      return res.status(404).json({ message: 'Aucune réservation trouvée pour ce catway' });
+    }
     res.json(reservations);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// GET une réservation précise
-exports.getReservationById = async (req, res) => {
-  try {
-    const reservation = await Reservation.findOne({
-      _id: req.params.idReservation,
-      catwayNumber: req.params.id
-    });
-
-    if (!reservation) {
-      return res.status(404).json({ message: 'Réservation non trouvée' });
-    }
-
-    res.json(reservation);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// POST une nouvelle réservation
+// Créer une nouvelle réservation
 const createReservation = async (req, res) => {
   try {
     const newReservation = new Reservation({
@@ -60,7 +45,7 @@ const createReservation = async (req, res) => {
   }
 };
 
-// PUT (modifier une réservation)
+// Modifier une réservation
 const updateReservation = async (req, res) => {
   try {
     const updated = await Reservation.findOneAndUpdate(
@@ -79,7 +64,7 @@ const updateReservation = async (req, res) => {
   }
 };
 
-// DELETE une réservation
+// Supprimer une réservation
 const deleteReservation = async (req, res) => {
   try {
     const deleted = await Reservation.findOneAndDelete({

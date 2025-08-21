@@ -22,11 +22,9 @@ app.use('/catways', catwaysRoutes);
 const reservationRoutes = require('./routes/reservations');
 app.use('/', reservationRoutes);
 
+const userRoutes = require('./routes/users');
+app.use('/', userRoutes);
 
-//Prochaines routes :
-  // app.use('/users', userRoutes);
-
-// const reservationRoutes = require('./routes/reservations');
 
 
 
