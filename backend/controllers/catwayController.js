@@ -10,7 +10,7 @@ const getCatways = async (req, res) => {
   }
 };
 
-// Récupérer un catway par ID
+// Récupérer un catway par numéro
 const getCatwayByNumber = async (req, res) => {
   try {
     const catway = await Catway.findOne({ catwayNumber: req.params.id });
@@ -23,7 +23,7 @@ const getCatwayByNumber = async (req, res) => {
   }
 };
 
-// POST /catways
+// Créer un catway
 const createCatway = async (req, res) => {
   try {
     const newCatway = new Catway(req.body);
@@ -34,7 +34,7 @@ const createCatway = async (req, res) => {
   }
 };
 
-// PUT /catways/:id
+// Modifier un catway via son numéro
 const updateCatway = async (req, res) => {
   try {
     const updatedCatway = await Catway.findOneAndUpdate(
@@ -49,7 +49,7 @@ const updateCatway = async (req, res) => {
   }
 };
 
-// DELETE /catways/:id
+// Effacer un catway par son numéro
 const deleteCatway = async (req, res) => {
   try {
     const deletedCatway = await Catway.findOneAndDelete({ catwayNumber: req.params.id });
