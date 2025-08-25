@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catways</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+
+
+    <h1>Gestion des catways</h1>
+
+
+    <div>
+        <h2>Ajouter un Catway</h2>
+            <form action="/catways" method="POST">
+                <label>Numéro :</label>
+                <input type="number" name="catwayNumber" required>
+        
+                <label>État :</label>
+                <input type="text" name="state" required>
+        
+                <button type="submit">Ajouter</button>
+            </form>
+    </div>
+
+    <div>
+        <h2>Liste des catways</h2>
+    <% if (catways && catways.length) { %>
+        <ul>
+        <% catways.forEach(c => { %>
+            <li>
+            <strong>#<%= c.catwayNumber %></strong> —
+            Type : <%= c.catwayType %> —
+            État : <%= c.catwayState %>
+            </li>
+        <% }) %>
+        </ul>
+    <% } else { %>
+        <p>Aucun catway pour le moment.</p>
+    <% } %>
+    </div>
+
+</body>
+</html>
