@@ -1,31 +1,52 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
+//const methodOverride = require('method-override');
 
 const app = express();
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
 
-// Route d'accueil
+
+// EJS
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+//Pour le CSS
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+// Pages EJS
 app.get('/', (req, res) => {
-  res.send('Devoir API de gestion des catways');
+  res.render('index');
 });
 
+app.get('/login', (req, res) => {
+  res.render('login');
+});
 
+app.get('/register', (req, res) => {
+  res.render('register');
+});
 
-// const userRoutes = require('./routes/users');
+const { renderCatwaysPage } = require ('./controllers/catwayController');
+app.get('/catways', renderCatwaysPage);
 
+// Routes API
 const catwaysRoutes = require('./routes/catways');
-app.use('/catways', catwaysRoutes);
+app.use('/api/catways', catwaysRoutes);
 
 const reservationRoutes = require('./routes/reservations');
-app.use('/', reservationRoutes);
+app.use('/api/reservations', reservationRoutes);
 
 const userRoutes = require('./routes/users');
-app.use('/', userRoutes);
+app.use('/api/users', userRoutes);
 
-
+const authRoutes = require('./routes/auth');
+app.use('/api/auth', authRoutes);
 
 
 module.exports = app;

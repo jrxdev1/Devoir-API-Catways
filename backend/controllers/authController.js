@@ -2,15 +2,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 
-// Inscription
-
-//const registration = async (req, res) => {
-//  try { 
-//
-//  }
-//};
-
-
 // Connexion
 const login = async (req, res) => {
   try {
@@ -30,16 +21,12 @@ const login = async (req, res) => {
 
     // Générer un token JWT
     const token = jwt.sign(
-      { id: user._id, email: user.email, role: user.role },
+      { id: user._id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    res.json({
-      message: "Connexion réussie",
-      token,
-      user: { name: user.name, email: user.email, role: user.role }
-    });
+    res.json({ message: "Connexion réussie", token });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

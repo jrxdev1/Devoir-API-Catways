@@ -22,7 +22,7 @@ const getUserByEmail = async (req, res) => {
   }
 };
 
-// Créer un utilisateur
+// Créer un utilisateur (ce qui permettre de gérer sno inscription)
 const createUser = async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
