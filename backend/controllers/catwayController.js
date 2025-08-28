@@ -66,10 +66,8 @@ const deleteCatway = async (req, res) => {
 const renderCatwaysPage = async (req, res) => {
   try {
     const catways = await Catway.find();
-    console.log(catways)
     res.render('catways', { catways });
   } catch (error) {
-    console.log(error)
     res.status(500).send("Erreur lors du chargement des catways");
   }
 };

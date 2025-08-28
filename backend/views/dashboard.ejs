@@ -7,11 +7,15 @@
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+<%- include('partials/header') %>
+
     <h1>Tableau de bord des réservations</h1>
     <div>
-        <a href="./catawys.ejs">Catways</a> |
-        <a href="./reservations.ejs">Réservations</a> |
-        <a href="./users.ejs">Utilisateurs</a>
+        <a href="/catways">Catways</a> |
+        <a href="/reservations">Réservations</a> |
+        <a href="/users">Utilisateurs</a>
     </div>
+
+<%- include('partials/footer') %>
 </body>
 </html>
