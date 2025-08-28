@@ -2,14 +2,14 @@
 const express = require('express');
 const router = express.Router();
 const reservationRoutes = require('./reservations');
-const { getCatways, getCatwayByNumber, createCatway, updateCatway, deleteCatway, renderCatwaysPage } = require('../controllers/catwayController');
+const { getCatways, getCatwayByNumber, createCatway, updateCatway, deleteCatway } = require('../controllers/catwayController');
 
 
 // Routes imbriquées :
 router.use('/:id/reservations', reservationRoutes);
 
 //Récupérer tous les catways
-router.get('/', getCatways);
+router.get('/api', getCatways);
 
 // Récupérer un catway par ID
 router.get('/:id', getCatwayByNumber);

@@ -10,6 +10,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
 
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
 
 // EJS
 app.set('view engine', 'ejs');
@@ -20,20 +22,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 // Pages EJS
-app.get('/', (req, res) => {
-  res.render('index');
-});
-
-app.get('/login', (req, res) => {
-  res.render('login');
-});
-
-app.get('/register', (req, res) => {
-  res.render('register');
-});
+const pagesRoutes = require('./routes/pages');
+app.use('/', pagesRoutes);
 
 const { renderCatwaysPage } = require ('./controllers/catwayController');
 app.get('/catways', renderCatwaysPage);
+
 
 // Routes API
 const catwaysRoutes = require('./routes/catways');
