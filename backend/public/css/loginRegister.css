@@ -1,0 +1,21 @@
+* {
+    margin: auto;
+    max-width: 400px;
+}
+
+label, input, button {
+    margin: 5px;
+}
+
+div {
+    margin: 5px;
+}
+
+input {
+    text-align: left;
+    padding: 2px;
+}
+
+p {
+    margin-top: 10px;
+}

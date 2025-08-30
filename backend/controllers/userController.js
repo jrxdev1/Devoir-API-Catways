@@ -74,5 +74,17 @@ const deleteUserByEmail = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, getUserByEmail, createUser, updateUserByEmail, deleteUserByEmail };
+// Route ejs
+
+const renderUsersPage = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.render('users', { users });
+  } catch (error) {
+    res.status(500).send("Erreur lors du chargement des utilisateurs");
+  }
+};
+
+
+module.exports = { getUsers, getUserByEmail, createUser, updateUserByEmail, deleteUserByEmail, renderUsersPage };
 

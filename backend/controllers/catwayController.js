@@ -1,5 +1,6 @@
 const Catway = require('../models/Catway');
 
+// API
 // Récupérer tous les catways
 const getCatways = async (req, res) => {
   try {
@@ -42,7 +43,7 @@ const updateCatway = async (req, res) => {
       req.body,
       { new: true }
     );
-    if (!updatedCatway) return res.status(404).json({ message: 'Catway not found' });
+    if (!updatedCatway) return res.status(404).json({ message: 'Catway introuvable' });
     res.json(updatedCatway);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -53,14 +54,16 @@ const updateCatway = async (req, res) => {
 const deleteCatway = async (req, res) => {
   try {
     const deletedCatway = await Catway.findOneAndDelete({ catwayNumber: req.params.id });
-    if (!deletedCatway) return res.status(404).json({ message: 'Catway not found' });
+    if (!deletedCatway) return res.status(404).json({ message: 'Catway introuvable' });
     // Supprimer aussi les réservations liées au catway
     await Reservation.deleteMany({ catwayNumber: req.params.id });
-    res.json({ message: 'Catway and related reservations deleted' });
+    res.json({ message: 'Catway supprimé avec succès' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
+//EJS
 
 // Affichier la liste des catways pour catways.ejs
 const renderCatwaysPage = async (req, res) => {

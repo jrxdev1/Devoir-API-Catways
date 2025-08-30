@@ -1,15 +1,106 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Utilisateurs</title>
-    <link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <title>Gestion des utilisateurs</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<%- include('partials/header') %>
-    <h1>Utilisateurs</h1>
+  <%- include('partials/header') %>
 
-<%- include('partials/footer') %>
+  <h1>Liste des utilisateurs</h1>
+
+  <% if (users && users.length) { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Nom</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(u => { %>
+          <tr data-email="<%= u.email %>">
+            <td><%= u.email %></td>
+            <td><%= u.name %></td>
+            <td>
+              <button class="editBtn">Modifier</button>
+              <button class="deleteBtn">Supprimer</button>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <p>Aucun utilisateur pour le moment.</p>
+  <% } %>
+
+  <h2>Ajouter / Modifier un utilisateur</h2>
+  <form id="userForm">
+    <label>
+      Nom
+      <input type="text" name="name" required>
+    </label>
+    <label>
+      Email
+      <input type="email" name="email" required>
+    </label>
+    <label>
+      Mot de passe
+      <input type="password" name="password" required>
+    </label>
+    <button type="submit">Envoyer</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('userForm');
+    const table = document.querySelector('tbody');
+
+    // Ajouter un utilisateur
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      location.reload();
+    });
+
+    // Supprimer un utilisateur
+    table.addEventListener('click', async (e) => {
+      if (e.target.classList.contains('deleteBtn')) {
+        const email = e.target.closest('tr').dataset.email;
+        await fetch(`/api/users/${email}`, { method: 'DELETE' });
+        location.reload();
+      }
+    });
+
+    // Modifier un utilisateur
+    table.addEventListener('click', (e) => {
+      if (e.target.classList.contains('editBtn')) {
+        const tr = e.target.closest('tr');
+        const email = tr.dataset.email;
+        form.name.value = tr.children[1].textContent;
+        form.email.value = tr.children[0].textContent;
+
+        // Changer le submit pour faire un PUT
+        form.onsubmit = async (event) => {
+          event.preventDefault();
+          const data = Object.fromEntries(new FormData(form));
+          await fetch(`/api/users/${email}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          location.reload();
+        };
+      }
+    });
+  </script>
+
+  <%- include('partials/footer') %>
 </body>
 </html>

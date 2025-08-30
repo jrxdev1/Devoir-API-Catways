@@ -1,6 +1,8 @@
 const express = require('express');
 const { loginPage } = require('../controllers/authController');
 const { renderCatwaysPage } = require('../controllers/catwayController');
+const { renderReservationsPage } = require('../controllers/reservationController');
+const { renderUsersPage } = require('../controllers/userController');
 const authMiddleware = require('../middleware/auth');
 const router = express.Router();
 
@@ -36,18 +38,12 @@ router.get('/dashboard', authMiddleware, (req, res) => {
 });
 
 // Page catways
-router.get('/catways', authMiddleware, renderCatwaysPage, (req, res) => {
-  res.render('catways'); 
-});
+router.get('/catways', authMiddleware, renderCatwaysPage);
 
 // Page réservations
-router.get('/reservations', authMiddleware, (req, res) => {
-  res.render('reservations');
-});
+router.get('/reservations', authMiddleware, renderReservationsPage);
 
 // Page utilisateurs
-router.get('/users', authMiddleware, (req, res) => {
-  res.render('users');
-});
+router.get('/users', authMiddleware, renderUsersPage);
 
 module.exports = router;
