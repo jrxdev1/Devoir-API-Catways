@@ -82,4 +82,16 @@ const deleteReservation = async (req, res) => {
   }
 };
 
-module.exports = { getAllReservations, getReservationsByCatway, createReservation, updateReservation, deleteReservation };
+//Page ejs
+
+const renderReservationsPage = async (req, res) => {
+  try {
+    const reservations = await Reservation.find();
+    res.render('reservations', { reservations });
+  } catch (error) {
+    res.status(500).send("Erreur lors du chargement des réservations");
+  }
+};
+
+
+module.exports = { getAllReservations, getReservationsByCatway, createReservation, updateReservation, deleteReservation, renderReservationsPage };

@@ -1,46 +1,100 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catways</title>
-    <link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <title>Catways</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
+
 <%- include('partials/header') %>
 
-    <h1>Gestion des catways</h1>
+  <h1>Gestion des Catways</h1>
 
-    <div>
-        <h2>Ajouter un Catway</h2>
-            <form action="/catways" method="POST">
-                <label>Numéro :</label>
-                <input type="number" name="catwayNumber" required>
-        
-                <label>État :</label>
-                <input type="text" name="state" required>
-        
-                <button type="submit">Ajouter</button>
-            </form>
-    </div>
+<!-- Formulaire d'ajout -->
+<div>
+<h2>Ajouter un catway :</h2>
+<form id="catwayForm">
+    <input type="number" name="catwayNumber" placeholder="Numéro" required>
+    <input type="text" name="catwayType" placeholder="Type (long/short)" required>
+    <input type="text" name="catwayState" placeholder="État" required>
+    <button type="submit">Ajouter / Modifier</button>
+  </form>
+</div>
 
-    <div>
-        <h2>Liste des catways</h2>
+  <!-- Recherche d'un catway -->
+  <div>
+  <h2>Rechercher un catway par numéro : </h2>
+    <input type="number" id="searchNumber" placeholder="Chercher par numéro">
+    <button id="searchBtn">Rechercher</button>
+  </div>
+
+  <!-- Liste des catways -->
+  <div>
+    <h2>Liste des catways :</h2>
+      <ul id="catwaysList">
     <% if (catways && catways.length) { %>
-        <ul>
-        <% catways.forEach(c => { %>
-            <li>
-            <strong>#<%= c.catwayNumber %></strong> —
-            Type : <%= c.catwayType %> —
-            État : <%= c.catwayState %>
-            </li>
-        <% }) %>
-        </ul>
+      <% catways.forEach(c => { %>
+        <li data-id="<%= c.catwayNumber %>">
+          <strong>#<%= c.catwayNumber %></strong> —
+          Type: <%= c.catwayType %> —
+          État: <%= c.catwayState %>
+          <button class="deleteBtn">Supprimer</button>
+        </li>
+      <% }) %>
     <% } else { %>
-        <p>Aucun catway pour le moment.</p>
+      <p>Aucun catway pour le moment.</p>
     <% } %>
-    </div>
+  </ul>
+  </div>
+
+<script>
+const form = document.getElementById('catwayForm');
+const list = document.getElementById('catwaysList');
+const searchBtn = document.getElementById('searchBtn');
+const searchInput = document.getElementById('searchNumber');
+
+// Ajouter ou modifier un catway
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(form));
+  // On essaie PUT d'abord, sinon POST
+  try {
+    await fetch(`/api/catways/${data.catwayNumber}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+  } catch {
+    await fetch('/api/catways', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+  }
+  location.reload();
+});
+
+// Supprimer un catway
+list.addEventListener('click', async (e) => {
+  if(e.target.classList.contains('deleteBtn')) {
+    const id = e.target.parentElement.dataset.id;
+    await fetch(`/api/catways/${id}`, { method: 'DELETE' });
+    location.reload();
+  }
+});
+
+// Chercher un catway
+searchBtn.addEventListener('click', async () => {
+  const id = searchInput.value;
+  if(!id) return;
+  const res = await fetch(`/api/catways/${id}`);
+  const catway = await res.json();
+  list.innerHTML = `<li><strong>#${catway.catwayNumber}</strong> — Type: ${catway.catwayType} — État: ${catway.catwayState}</li>`;
+});
+</script>
 
 <%- include('partials/footer') %>
+
 </body>
 </html>

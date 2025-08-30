@@ -1,15 +1,128 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Réservations</title>
-    <link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <title>Liste des réservations</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<%- include('partials/header') %>
-    <h1>Réservations</h1>
+  <%- include('partials/header') %>
 
-<%- include('partials/footer') %>
+  <h1>Liste des réservations</h1>
+  <div>
+    <% if (reservations && reservations.length) { %>
+      <table>
+        <thead>
+          <tr>
+            <th>Catway #</th>
+            <th>Client</th>
+            <th>Bateau</th>
+            <th>Date début</th>
+            <th>Date fin</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% reservations.forEach(r => { %>
+            <tr data-id="<%= r._id %>">
+              <td><%= r.catwayNumber %></td>
+              <td><%= r.clientName %></td>
+              <td><%= r.boatName %></td>
+              <td><%= new Date(r.startDate).toLocaleDateString() %></td>
+              <td><%= new Date(r.endDate).toLocaleDateString() %></td>
+              <td>
+                <button class="editBtn">Modifier</button>
+                <button class="deleteBtn">Supprimer</button>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p>Aucune réservation pour le moment.</p>
+    <% } %>
+  </div>
+
+  <h2>Ajouter / Modifier une réservation</h2>
+  <form id="reservationForm">
+    <label>
+      Catway
+      <input type="number" name="catwayNumber" required>
+    </label>
+    <label>
+      Nom du client
+      <input type="text" name="clientName" required>
+    </label>
+    <label>
+      Nom du bateau
+      <input type="text" name="boatName" required>
+    </label>
+    <label>
+      Date début
+      <input type="date" name="startDate" required>
+    </label>
+    <label>
+      Date fin
+      <input type="date" name="endDate" required>
+    </label>
+    <button type="submit">Envoyer</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('reservationForm');
+    const table = document.querySelector('tbody');
+
+    // Ajouter une réservation
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      const catwayNumber = form.catwayNumber.value;
+      await fetch(`/api/catways/${catwayNumber}/reservations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      location.reload();
+    });
+
+    // Supprimer une réservation
+    table.addEventListener('click', async (e) => {
+      if (e.target.classList.contains('deleteBtn')) {
+        const tr = e.target.closest('tr');
+        const id = tr.dataset.id;
+        const catwayNumber = tr.children[0].textContent;
+        await fetch(`/api/catways/${catwayNumber}/reservations/${id}`, { method: 'DELETE' });
+        location.reload();
+      }
+    });
+
+    // Modifier une réservation
+    table.addEventListener('click', (e) => {
+      if (e.target.classList.contains('editBtn')) {
+        const tr = e.target.closest('tr');
+        const id = tr.dataset.id;
+        form.catwayNumber.value = tr.children[0].textContent;
+        form.clientName.value = tr.children[1].textContent;
+        form.boatName.value = tr.children[2].textContent;
+        form.startDate.value = new Date(tr.children[3].textContent).toISOString().split('T')[0];
+        form.endDate.value = new Date(tr.children[4].textContent).toISOString().split('T')[0];
+
+        // Changer le submit pour faire un PUT
+        form.onsubmit = async (event) => {
+          event.preventDefault();
+          const data = Object.fromEntries(new FormData(form));
+          const catwayNumber = form.catwayNumber.value;
+          await fetch(`/api/catways/${catwayNumber}/reservations/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          location.reload();
+        };
+      }
+    });
+  </script>
+
+  <%- include('partials/footer') %>
 </body>
 </html>
