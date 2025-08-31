@@ -23,7 +23,7 @@
         <% users.forEach(u => { %>
           <tr data-email="<%= u.email %>">
             <td><%= u.email %></td>
-            <td><%= u.name %></td>
+            <td><%= u.username %></td>
             <td>
               <button class="editBtn">Modifier</button>
               <button class="deleteBtn">Supprimer</button>
@@ -61,7 +61,7 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(form));
-      await fetch('/api/users', {
+      await fetch('/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -73,7 +73,7 @@
     table.addEventListener('click', async (e) => {
       if (e.target.classList.contains('deleteBtn')) {
         const email = e.target.closest('tr').dataset.email;
-        await fetch(`/api/users/${email}`, { method: 'DELETE' });
+        await fetch(`/users/${email}`, { method: 'DELETE' });
         location.reload();
       }
     });
@@ -90,7 +90,7 @@
         form.onsubmit = async (event) => {
           event.preventDefault();
           const data = Object.fromEntries(new FormData(form));
-          await fetch(`/api/users/${email}`, {
+          await fetch(`/users/${email}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)

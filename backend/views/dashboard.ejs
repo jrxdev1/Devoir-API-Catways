@@ -12,11 +12,54 @@
 
 <main>
     <h1>Tableau de bord des réservations</h1>
+    <!--Navigation-->
     <div id=buttons>
         <a href="/catways">Catways</a> |
         <a href="/reservations">Réservations</a> |
         <a href="/users">Utilisateurs</a>
     </div>
+
+    <!--Infos utilisateur-->
+    <div id='user-info'>
+        <h2>Bienvenue, <%= user.name %> 👋</h2>
+        <p>Email : <%= user.email %></p>
+        <p>Date du jour : <span id="today"><%= today %></span></p>
+    </div>
+
+<!-- Tableau des réservations -->
+    <div id="reservations">
+        <h2>Réservations en cours</h2>
+        <% if (reservations && reservations.length) { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>n°</th>
+                    <th>Catway</th>
+                    <th>Nom du client</th>
+                    <th>Bateau</th>
+                    <th>Date début</th>
+                    <th>Date fin</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% reservations.forEach((r, i) => { %>
+                <tr>
+                    <td><%= i+1 %></td>
+                    <td><%= r.catwayNumber %></td>
+                    <td><%= r.clientName %></td>
+                    <td><%= r.boatName %></td>
+                    <td><%= r.startDate.toLocaleDateString('fr-FR') %></td>
+                    <td><%= r.endDate.toLocaleDateString('fr-FR') %></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <% } else { %>
+            <p>Aucune réservation en cours.</p>
+        <% } %>
+    </div>
+</main>
+
 </main>
 <%- include('partials/footer') %>
 </body>

@@ -30,16 +30,16 @@ app.get('/catways', renderCatwaysPage);
 
 // Routes API
 const catwaysRoutes = require('./routes/catways');
-app.use('/api/catways', catwaysRoutes);
+app.use('/catways', catwaysRoutes);
 
 const reservationRoutes = require('./routes/reservations');
-app.use('/api/reservations', reservationRoutes);
+app.use('/catways', reservationRoutes);
 
 const userRoutes = require('./routes/users');
-app.use('/api/users', userRoutes);
+app.use('/users', userRoutes);
 
 const authRoutes = require('./routes/auth');
-app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
 
 
 module.exports = app;
