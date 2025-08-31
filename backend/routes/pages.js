@@ -4,6 +4,7 @@ const { renderCatwaysPage } = require('../controllers/catwayController');
 const { renderReservationsPage } = require('../controllers/reservationController');
 const { renderUsersPage } = require('../controllers/userController');
 const authMiddleware = require('../middleware/auth');
+const { showDashboard } = require('../controllers/dashboardController');
 const router = express.Router();
 
 // Page d'accueil
@@ -28,14 +29,12 @@ router.post('/logout', (req, res) => {
   // Supprime le cookie en l'expirant immédiatement
   res.clearCookie("token");
   // Redirection vers la page de connexion
-  res.redirect('/login');
+  res.redirect('/');
 });
 
 
 // Page dashboard (accessible après login)
-router.get('/dashboard', authMiddleware, (req, res) => {
-  res.render('dashboard');
-});
+router.get('/dashboard', authMiddleware, showDashboard );
 
 // Page catways
 router.get('/catways', authMiddleware, renderCatwaysPage);

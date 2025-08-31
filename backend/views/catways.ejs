@@ -13,21 +13,34 @@
 
 <!-- Formulaire d'ajout -->
 <div>
-<h2>Ajouter un catway :</h2>
+<h2>Ajouter un catway</h2>
 <form id="catwayForm">
-    <input type="number" name="catwayNumber" placeholder="Numéro" required>
-    <input type="text" name="catwayType" placeholder="Type (long/short)" required>
-    <input type="text" name="catwayState" placeholder="État" required>
-    <button type="submit">Ajouter / Modifier</button>
-  </form>
+  <label>
+    Numéro
+    <input type="number" name="catwayNumber" required>
+  </label>
+  <label>
+    Type
+    <input type="text" name="catwayType" required>
+  </label>
+  <label>
+    État
+    <input type="text" name="catwayState" required>
+  </label>
+  <button type="submit">Ajouter</button>
+</form>
 </div>
 
   <!-- Recherche d'un catway -->
   <div>
   <h2>Rechercher un catway par numéro : </h2>
+  <form id="searchForm">
     <input type="number" id="searchNumber" placeholder="Chercher par numéro">
     <button id="searchBtn">Rechercher</button>
+  </form>
+  <div id="searchResult"></div>
   </div>
+
 
   <!-- Liste des catways -->
   <div>
@@ -39,6 +52,7 @@
           <strong>#<%= c.catwayNumber %></strong> —
           Type: <%= c.catwayType %> —
           État: <%= c.catwayState %>
+          <button class="editBtn">Modifier</button>
           <button class="deleteBtn">Supprimer</button>
         </li>
       <% }) %>
@@ -48,51 +62,106 @@
   </ul>
   </div>
 
+<div id="editPopup" style="display:none; position:fixed; top:30%; left:50%; transform:translateX(-50%);
+ background:#fff; padding:20px; border:1px solid #ccc; box-shadow:0 2px 10px rgba(0,0,0,0.3);">
+  <h3>Modifier l’état du catway</h3>
+  <form id="editForm">
+    <label>
+      Nouvel état :
+      <input type="text" name="catwayState" required>
+    </label>
+    <button type="submit">Enregistrer</button>
+    <button type="button" id="closePopup">Annuler</button>
+  </form>
+</div>
+
+
 <script>
 const form = document.getElementById('catwayForm');
 const list = document.getElementById('catwaysList');
 const searchBtn = document.getElementById('searchBtn');
 const searchInput = document.getElementById('searchNumber');
 
-// Ajouter ou modifier un catway
+const popup = document.getElementById('editPopup');
+const editForm = document.getElementById('editForm');
+const closePopup = document.getElementById('closePopup');
+let currentEditId = null;
+
+// Ajouter un catway
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(form));
-  // On essaie PUT d'abord, sinon POST
-  try {
-    await fetch(`/api/catways/${data.catwayNumber}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-  } catch {
-    await fetch('/api/catways', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-  }
+
+  await fetch('/catways', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  form.reset();
   location.reload();
 });
 
-// Supprimer un catway
-list.addEventListener('click', async (e) => {
-  if(e.target.classList.contains('deleteBtn')) {
-    const id = e.target.parentElement.dataset.id;
-    await fetch(`/api/catways/${id}`, { method: 'DELETE' });
-    location.reload();
+
+// Supprimer ou remplir formulaire pour modifier
+list.addEventListener('click', (e) => {
+  const li = e.target.closest('li');
+  if (!li) return;
+  const id = li.dataset.id;
+
+  if (e.target.classList.contains('deleteBtn')) {
+    fetch(`/catways/${id}`, { method: 'DELETE' })
+      .then(() => location.reload());
+  }
+
+  if (e.target.classList.contains('editBtn')) {
+    currentEditId = id;
+    popup.style.display = 'block';
   }
 });
 
+// Sauvegarder nouvelle valeur via PUT
+editForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(editForm));
+
+  await fetch(`/catways/${currentEditId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data) // uniquement { catwayState: "..." }
+  });
+
+  popup.style.display = 'none';
+  editForm.reset();
+  currentEditId = null;
+  location.reload();
+});
+
+// Fermer popup
+closePopup.addEventListener('click', () => {
+  popup.style.display = 'none';
+  currentEditId = null;
+});
+
 // Chercher un catway
-searchBtn.addEventListener('click', async () => {
+searchBtn.addEventListener('click', async (e) => {
+  e.preventDefault();
   const id = searchInput.value;
   if(!id) return;
-  const res = await fetch(`/api/catways/${id}`);
-  const catway = await res.json();
-  list.innerHTML = `<li><strong>#${catway.catwayNumber}</strong> — Type: ${catway.catwayType} — État: ${catway.catwayState}</li>`;
+
+  try {
+    const res = await fetch(`/catways/${id}`);
+    if (!res.ok) throw new Error('Catway non trouvé');
+    const catway = await res.json();
+    list.innerHTML = `<li data-id="${catway.catwayNumber}"><strong>#${catway.catwayNumber}</strong> — Type: ${catway.catwayType} — État: ${catway.catwayState}
+    <button class="editBtn">Modifier</button>
+    <button class="deleteBtn">Supprimer</button>
+    </li>`;
+  } catch (err) {
+    list.innerHTML = `<p>${err.message}</p>`;
+  }
 });
 </script>
+
 
 <%- include('partials/footer') %>
 

@@ -12,19 +12,41 @@ const getAllReservations = async (req, res) => {
   }
 };
 
-
-// Récupérer toutes les réservations d’un catway en particulier
+// Toutes les réservations d’un catway
 const getReservationsByCatway = async (req, res) => {
   try {
-    const reservations = await Reservation.find({ catwayNumber: req.params.id });
-    
+    const { id } = req.params;
+    const reservations = await Reservation.find({ catwayNumber: Number(id) });
+
     if (!reservations || reservations.length === 0) {
       return res.status(404).json({ message: 'Aucune réservation trouvée pour ce catway' });
     }
+
     res.json(reservations);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+};
+
+// Récupérer toutes les réservations d’un client avec le n° du catway
+const getReservationsById = async (req, res) => {
+  try {
+      const { id, idReservation } = req.params;
+
+      // On cherche UNE seule réservation qui correspond
+      const reservation = await Reservation.findOne({
+        _id: idReservation,
+        catwayNumber: id
+      });
+
+      if (!reservation) {
+        return res.status(404).json({ message: 'Réservation non trouvée' });
+      }
+
+      res.json(reservation);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
 };
 
 // Créer une nouvelle réservation
@@ -94,4 +116,4 @@ const renderReservationsPage = async (req, res) => {
 };
 
 
-module.exports = { getAllReservations, getReservationsByCatway, createReservation, updateReservation, deleteReservation, renderReservationsPage };
+module.exports = { getAllReservations, getReservationsById, createReservation, updateReservation, deleteReservation, renderReservationsPage, getReservationsByCatway };

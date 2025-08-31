@@ -8,13 +8,30 @@
 <body>
   <%- include('partials/header') %>
 
-  <h1>Liste des réservations</h1>
+  <h1>Réservations</h1>
+
+  <h2>Rechercher une réservation</h2>
+    <form id="searchReservationForm">
+      <label>
+        Catway
+        <input type="number" name="catwayNumber" required>
+      </label>
+      <label>
+        Prénom Nom (ID Réservation)
+        <input type="text" name="reservationId" required>
+      </label>
+      <button type="submit">Rechercher</button>
+    </form>
+
+<div id="searchResult"></div>
+
+  <h2>Liste des réservations</h2>
   <div>
     <% if (reservations && reservations.length) { %>
       <table>
         <thead>
           <tr>
-            <th>Catway #</th>
+            <th>Catway</th>
             <th>Client</th>
             <th>Bateau</th>
             <th>Date début</th>
@@ -69,15 +86,17 @@
   </form>
 
   <script>
-    const form = document.getElementById('reservationForm');
-    const table = document.querySelector('tbody');
 
-    // Ajouter une réservation
+const form = document.getElementById('reservationForm');
+const table = document.querySelector('tbody');
+const searchForm = document.getElementById('searchReservationForm');
+const searchResult = document.getElementById('searchResult');
+
+// Ajouter une réservation
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(form));
-      const catwayNumber = form.catwayNumber.value;
-      await fetch(`/api/catways/${catwayNumber}/reservations`, {
+      await fetch(`/catways/${data.catwayNumber}/reservations`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
@@ -85,42 +104,61 @@
       location.reload();
     });
 
-    // Supprimer une réservation
-    table.addEventListener('click', async (e) => {
-      if (e.target.classList.contains('deleteBtn')) {
-        const tr = e.target.closest('tr');
-        const id = tr.dataset.id;
-        const catwayNumber = tr.children[0].textContent;
-        await fetch(`/api/catways/${catwayNumber}/reservations/${id}`, { method: 'DELETE' });
-        location.reload();
+// Rechercher une réservation
+    searchForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(searchForm));
+      const res = await fetch(`/catways/${data.catwayNumber}/reservations/${data.reservationId}`);
+      if (res.ok) {
+        const reservation = await res.json();
+        searchResult.innerHTML = `
+          <p>
+            Réservation trouvée : <strong>${reservation.clientName}</strong> - ${reservation.boatName} 
+            (${new Date(reservation.startDate).toLocaleDateString()} → ${new Date(reservation.endDate).toLocaleDateString()})
+          </p>`;
+      } else {
+        searchResult.innerHTML = '<p style="color:red">Aucune réservation trouvée</p>';
       }
     });
 
-    // Modifier une réservation
-    table.addEventListener('click', (e) => {
-      if (e.target.classList.contains('editBtn')) {
-        const tr = e.target.closest('tr');
-        const id = tr.dataset.id;
-        form.catwayNumber.value = tr.children[0].textContent;
-        form.clientName.value = tr.children[1].textContent;
-        form.boatName.value = tr.children[2].textContent;
-        form.startDate.value = new Date(tr.children[3].textContent).toISOString().split('T')[0];
-        form.endDate.value = new Date(tr.children[4].textContent).toISOString().split('T')[0];
 
-        // Changer le submit pour faire un PUT
-        form.onsubmit = async (event) => {
-          event.preventDefault();
-          const data = Object.fromEntries(new FormData(form));
-          const catwayNumber = form.catwayNumber.value;
-          await fetch(`/api/catways/${catwayNumber}/reservations/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-          });
-          location.reload();
-        };
-      }
-    });
+// Supprimer une réservation
+table.addEventListener('click', async (e) => {
+  if (e.target.classList.contains('deleteBtn')) {
+    const id = e.target.closest('tr').dataset.id;
+    const catwayNumber = e.target.closest('tr').children[0].textContent;
+    await fetch(`/catways/${catwayNumber}/reservations/${id}`, { method: 'DELETE' });
+    location.reload();
+  }
+});
+
+// Modifier une réservation
+table.addEventListener('click', (e) => {
+  if (e.target.classList.contains('editBtn')) {
+    const tr = e.target.closest('tr');
+    const id = tr.dataset.id;
+    const catwayNumber = tr.dataset.catway;
+
+    form.catwayNumber.value = tr.children[0].textContent;
+    form.clientName.value = tr.children[1].textContent;
+    form.boatName.value = tr.children[2].textContent;
+    form.startDate.value = new Date(tr.children[3].textContent).toISOString().split('T')[0];
+    form.endDate.value = new Date(tr.children[4].textContent).toISOString().split('T')[0];
+
+    // Changer le submit pour faire un PUT
+    form.onsubmit = async (event) => {
+      event.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      await fetch(`/catways/${catwayNumber}/reservations/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      location.reload();
+    };
+  }
+});
+
   </script>
 
   <%- include('partials/footer') %>

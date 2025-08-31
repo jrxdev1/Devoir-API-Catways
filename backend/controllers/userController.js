@@ -78,7 +78,7 @@ const deleteUserByEmail = async (req, res) => {
 
 const renderUsersPage = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().select('-password');
     res.render('users', { users });
   } catch (error) {
     res.status(500).send("Erreur lors du chargement des utilisateurs");
