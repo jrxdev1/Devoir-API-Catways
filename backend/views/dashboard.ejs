@@ -16,12 +16,13 @@
     <div id=buttons>
         <a href="/catways">Catways</a> |
         <a href="/reservations">Réservations</a> |
-        <a href="/users">Utilisateurs</a>
+        <a href="/users">Utilisateurs</a> |
+        <a href="">Documentation API</a>
     </div>
 
     <!--Infos utilisateur-->
     <div id='user-info'>
-        <h2>Bienvenue, <%= user.name %> 👋</h2>
+        <h2>Bienvenue <%= user.username %> 👋</h2>
         <p>Email : <%= user.email %></p>
         <p>Date du jour : <span id="today"><%= today %></span></p>
     </div>

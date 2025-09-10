@@ -1,4 +1,5 @@
 const Reservation = require('../models/Reservation');
+const Name = require ('../models/User')
 
 
 // Récupérer toutes les réservations (tous les catways confondus)
@@ -48,6 +49,23 @@ const getReservationsById = async (req, res) => {
       res.status(500).json({ message: error.message });
     }
 };
+
+
+// Récupérer toutes les réservations d’un client avec son NOM
+const getReservationsByName = async (req, res) => {
+  try {
+      const name = req.params.name;
+      const reservations = await Reservation.find({ clientName: req.params.name });
+      if (!reservations) {
+        return res.status(404).json({ message: 'Réservation non trouvée' });
+      }
+
+      res.json(reservations);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+};
+
 
 // Créer une nouvelle réservation
 const createReservation = async (req, res) => {
@@ -116,4 +134,4 @@ const renderReservationsPage = async (req, res) => {
 };
 
 
-module.exports = { getAllReservations, getReservationsById, createReservation, updateReservation, deleteReservation, renderReservationsPage, getReservationsByCatway };
+module.exports = { getAllReservations, getReservationsById, createReservation, updateReservation, deleteReservation, renderReservationsPage, getReservationsByCatway, getReservationsByName };
