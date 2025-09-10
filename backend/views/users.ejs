@@ -8,8 +8,16 @@
 <body>
   <%- include('partials/header') %>
 
-  <h1>Liste des utilisateurs</h1>
+  <h1>Utilisateurs</h1>  
+<div>
+  <h2>Rechercher un utilisateur</h2>
+    <form>
+      <input type="text" id="searchUser" placeholder="email">
+      <button id="searchBtn">Rechercher</button>
+    </form>
+</div>
 
+  <h2>Liste des utilisateurs</h2>
   <% if (users && users.length) { %>
     <table>
       <thead>
@@ -40,7 +48,7 @@
   <form id="userForm">
     <label>
       Nom
-      <input type="text" name="name" required>
+      <input type="text" name="username" required>
     </label>
     <label>
       Email
@@ -57,6 +65,9 @@
     const form = document.getElementById('userForm');
     const table = document.querySelector('tbody');
 
+    const searchBtn = document.getElementById('searchBtn');
+    const searchInput = document.getElementById('searchUser');
+
     // Ajouter un utilisateur
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -68,6 +79,26 @@
       });
       location.reload();
     });
+
+    //Recherche un utilisateur
+    searchBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const email = searchInput.value;
+      if(!email) return;
+
+      try {
+        const res = await fetch(`/users/${email}`);
+        if (!res.ok) throw new Error('Utilisateur non trouvé');
+        const user = await res.json();
+        table.innerHTML = `<td>${user.email} - ${user.username}
+        <button class="editBtn">Modifier</button>
+        <button class="deleteBtn">Supprimer</button>
+        </td>`;
+      } catch (err) {
+        table.innerHTML = `<p>${err.message}</p>`;
+      }
+    });
+
 
     // Supprimer un utilisateur
     table.addEventListener('click', async (e) => {

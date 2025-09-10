@@ -10,18 +10,13 @@
 
   <h1>Réservations</h1>
 
-  <h2>Rechercher une réservation</h2>
-    <form id="searchReservationForm">
-      <label>
-        Catway
-        <input type="number" name="catwayNumber" required>
-      </label>
-      <label>
-        Prénom Nom (ID Réservation)
-        <input type="text" name="reservationId" required>
-      </label>
-      <button type="submit">Rechercher</button>
-    </form>
+  <div>
+    <h2>Rechercher une réservation</h2>
+      <form>
+        <input type="text" id="searchReservation" placeholder="Prénom Nom">
+        <button id="searchBtn">Rechercher</button>
+      </form>
+  </div>
 
 <div id="searchResult"></div>
 
@@ -89,8 +84,9 @@
 
 const form = document.getElementById('reservationForm');
 const table = document.querySelector('tbody');
-const searchForm = document.getElementById('searchReservationForm');
-const searchResult = document.getElementById('searchResult');
+
+const searchBtn = document.getElementById('searchBtn');
+const searchInput = document.getElementById('searchReservation');
 
 // Ajouter une réservation
     form.addEventListener('submit', async (e) => {
@@ -104,22 +100,27 @@ const searchResult = document.getElementById('searchResult');
       location.reload();
     });
 
-// Rechercher une réservation
-    searchForm.addEventListener('submit', async (e) => {
+  // Rechercher une réservation
+    searchBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      const data = Object.fromEntries(new FormData(searchForm));
-      const res = await fetch(`/catways/${data.catwayNumber}/reservations/${data.reservationId}`);
-      if (res.ok) {
+      const id = searchInput.value;
+      if(!id) return;
+
+      try {
+        const res = await fetch(`/reservations/${name}`);
+        if (!res.ok) throw new Error('Utilisateur non trouvé');
         const reservation = await res.json();
-        searchResult.innerHTML = `
-          <p>
-            Réservation trouvée : <strong>${reservation.clientName}</strong> - ${reservation.boatName} 
-            (${new Date(reservation.startDate).toLocaleDateString()} → ${new Date(reservation.endDate).toLocaleDateString()})
-          </p>`;
-      } else {
-        searchResult.innerHTML = '<p style="color:red">Aucune réservation trouvée</p>';
+        table.innerHTML = `<p>blablable</p><td>${reservation.catwayNumber} - ${reservation.clientName} - ${reservation.boatName} - 
+        (${new Date(reservation.startDate).toLocaleDateString()} → 
+        ${new Date(reservation.endDate).toLocaleDateString()})
+        <button class="editBtn">Modifier</button>
+        <button class="deleteBtn">Supprimer</button>
+        </td>`;
+      } catch (err) {
+        table.innerHTML = `<p>${err.message}</p>`;
       }
     });
+
 
 
 // Supprimer une réservation

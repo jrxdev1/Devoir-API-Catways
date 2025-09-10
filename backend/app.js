@@ -24,9 +24,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 const pagesRoutes = require('./routes/pages');
 app.use('/', pagesRoutes);
 
-const { renderCatwaysPage } = require ('./controllers/catwayController');
-app.get('/catways', renderCatwaysPage);
-
 
 // Routes API
 const catwaysRoutes = require('./routes/catways');
