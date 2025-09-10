@@ -54,12 +54,8 @@ const getReservationsById = async (req, res) => {
 // Récupérer toutes les réservations d’un client avec son NOM
 const getReservationsByName = async (req, res) => {
   try {
-      const name = req.params.name;
-      const reservations = await Reservation.find({ clientName: req.params.name });
-      if (!reservations) {
-        return res.status(404).json({ message: 'Réservation non trouvée' });
-      }
-
+      const reservations = await Reservation.findOne({ clientName: req.params.clientName});
+      if (!reservations) return res.status(404).json({ message: 'Réservation non trouvée' });
       res.json(reservations);
     } catch (error) {
       res.status(500).json({ message: error.message });
