@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getAllReservations, createReservation, updateReservation, deleteReservation, getReservationsByCatway, getReservationsByName } = require('../controllers/reservationController');
+const { getAllReservations, getReservationsById, createReservation, updateReservation, deleteReservation, getReservationsByCatway, getReservationsByName } = require('../controllers/reservationController');
 
 // GET toutes les réservations (tous les catways)
 router.get('/reservations', getAllReservations);
@@ -9,7 +9,7 @@ router.get('/reservations', getAllReservations);
 router.get('/catways/:id/reservations', getReservationsByCatway);
 
 // GET toutes les réservations d’un catway avec le nom de l'utilisateur
-router.get('/reservations/:name', getReservationsByName);
+router.get('/reservations/:clientName', getReservationsByName);
 
 // POST une réservation
 router.post('/:id/reservations', createReservation);

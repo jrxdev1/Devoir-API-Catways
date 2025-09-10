@@ -18,8 +18,6 @@
       </form>
   </div>
 
-<div id="searchResult"></div>
-
   <h2>Liste des réservations</h2>
   <div>
     <% if (reservations && reservations.length) { %>
@@ -36,7 +34,7 @@
         </thead>
         <tbody>
           <% reservations.forEach(r => { %>
-            <tr data-id="<%= r._id %>">
+            <tr data-clientName="<%= r.clientName %>">
               <td><%= r.catwayNumber %></td>
               <td><%= r.clientName %></td>
               <td><%= r.boatName %></td>
@@ -103,16 +101,16 @@ const searchInput = document.getElementById('searchReservation');
   // Rechercher une réservation
     searchBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      const id = searchInput.value;
-      if(!id) return;
+      const clientName = searchInput.value;
+      if(!clientName) return;
 
       try {
-        const res = await fetch(`/reservations/${name}`);
-        if (!res.ok) throw new Error('Utilisateur non trouvé');
-        const reservation = await res.json();
-        table.innerHTML = `<p>blablable</p><td>${reservation.catwayNumber} - ${reservation.clientName} - ${reservation.boatName} - 
-        (${new Date(reservation.startDate).toLocaleDateString()} → 
-        ${new Date(reservation.endDate).toLocaleDateString()})
+        const res = await fetch(`/reservations/${encodeURIComponent(clientName)}`);
+        if (!res.ok) throw new Error('Client non trouvé');
+        const reservations = await res.json();
+        table.innerHTML = `<td>${reservations.catwayNumber} - ${reservations.clientName} - ${reservation.boatName} - 
+        (${new Date(reservations.startDate).toLocaleDateString()} → 
+        ${new Date(reservations.endDate).toLocaleDateString()})
         <button class="editBtn">Modifier</button>
         <button class="deleteBtn">Supprimer</button>
         </td>`;
@@ -120,7 +118,6 @@ const searchInput = document.getElementById('searchReservation');
         table.innerHTML = `<p>${err.message}</p>`;
       }
     });
-
 
 
 // Supprimer une réservation
