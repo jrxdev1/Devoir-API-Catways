@@ -34,7 +34,7 @@
         </thead>
         <tbody>
           <% reservations.forEach(r => { %>
-            <tr data-clientName="<%= r.clientName %>">
+            <tr data-id="<%= r._id %>">
               <td><%= r.catwayNumber %></td>
               <td><%= r.clientName %></td>
               <td><%= r.boatName %></td>
