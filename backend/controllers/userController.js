@@ -75,7 +75,6 @@ const deleteUserByEmail = async (req, res) => {
 };
 
 // Route ejs
-
 const renderUsersPage = async (req, res) => {
   try {
     const users = await User.find().select('-password');

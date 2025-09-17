@@ -1,0 +1,588 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Catways API",
+    "description": "Documentation de l’API de gestion des catways et réservations",
+    "version": "1.0.0"
+  },
+  "host": "localhost:5000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "summary": "Connexion utilisateur",
+        "description": "Authentifie un utilisateur et renvoie un token JWT en cas de succès",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "arthurfavre@essai.com"
+                },
+                "password": {
+                  "example": "azerty123"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Connexion réussie",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type":"object",
+                "properties": {
+                  "token": { "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requête invalide"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/catways": {
+      "get": {
+        "summary": "Récupérer tous les catways",
+        "description": "Retourner la liste complète de tous les catways disponibles dans le port.",
+        "responses": {
+          "200": {
+            "description": "Catway trouvé",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type":"object",
+                "properties": {
+                  "_id": { "type": "string", "example": "64f123abc1234def56789012" },
+                  "number": { "type": "number", "example": 1 },
+                  "type": { "type": "string", "example": "long" },
+                  "state": { "type": "string", "example": "Bon état" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Créer un nouveau catway",
+        "description": "Ajouter un catway à la base de données.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "number": { "type": "number", "example": 1 },
+                "type": { "type": "string", "example": "long" },
+                "state": { "type": "string", "example": "Bon état" }
+                }
+              }
+            }
+        ],
+        "responses": {
+          "201": {
+            "description": "Catway créé",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type":"object",
+                "properties": {
+                  "_id": { "type": "string", "example": "64f123abc1234def56789012" },
+                  "number": { "type": "number", "example": 1 },
+                  "type": { "type": "string", "example": "long" },
+                  "state": { "type": "string", "example": "Bon état" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requête invalide"
+          }
+        }
+      }
+    },
+    "/catways/{id}": {
+      "get": {
+        "summary": "Récupérer un catway par son numéro",
+        "description": "Retourner les informations d’un catway spécifique à partir de son numéro.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "number",
+            "description": "numéro du catway"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Catway récupéré avec succès",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type":"object",
+                "properties": {
+                  "_id": { "type": "string", "example": "64f123abc1234def56789012" },
+                  "number": { "type": "number", "example": 1 },
+                  "type": { "type": "string", "example": "long" },
+                  "state": { "type": "string", "example": "Bon état" }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Catway non trouvé"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Modifier l'état du catway",
+        "description": "Modifier l'état du catway spécifique",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "number",
+            "description": "numéro du catway"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Catway modifié avec succès",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type":"object",
+                "properties": {
+                  "_id": { "type": "string", "example": "64f123abc1234def56789012" },
+                  "number": { "type": "number", "example": 1 },
+                  "type": { "type": "string", "example": "long" },
+                  "state": { "type": "string", "example": "En cours de réparation" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requête invalide"
+          },
+          "404": {
+            "description": "Catway non trouvé"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Supprimer un catway",
+        "description": "Supprime un catway",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "number",
+            "description": "numéro du catway"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Catway supprimé avec succès"
+          },
+          "404": {
+            "description": "Catway non trouvé"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/reservations": {
+      "get": {
+        "summary": "Récupérer toutes les réservations",
+        "description": "Récupérer toutes les réservations de catways",
+        "responses": {
+          "200": {
+            "description": "Réservations trouvées avec succès",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "_id": { "type": "string", "example": "64f123abc1234def56789012" },
+                  "catwayNumber": { "type": "number", "example": 1 },
+                  "clientName": { "type": "string", "example": "Jean Dupont" },
+                  "boatName": { "type": "string", "example": "Mon bateau" },
+                  "startDate": { "type": "string", "example": "2025-09-17" },
+                  "endDate": { "type": "string", "example": "2025-09-20" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/reservations/{clientName}": {
+      "get": {
+        "summary": "Récupérer les réservations d'un client",
+        "description": "Récupérer les réservations d'un client à l'aide de son nom",
+        "parameters": [
+          {
+            "name": "clientName",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Nom du client"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Réservation trouvée avec succès",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "_id": { "type": "string", "example": "64f123abc1234def56789012" },
+                  "catwayNumber": { "type": "number", "example": 1 },
+                  "clientName": { "type": "string", "example": "Jean Dupont" },
+                  "boatName": { "type": "string", "example": "Mon bateau" },
+                  "startDate": { "type": "string", "example": "2025-09-17" },
+                  "endDate": { "type": "string", "example": "2025-09-20" }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Réservation non trouvée"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/reservations/{id}/reservations": {
+      "post": {
+        "summary": "Créer une réservation",
+        "description": "Créer une réservation avec toutes les informations",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "number",
+            "description": "numéro du catway"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "catwayNumber": {
+                  "example": 5
+                },
+                "clientName": {
+                  "example": "John Doe"
+                },
+                "boatName": {
+                  "example": "Groeland"
+                },
+                "startDate": {
+                  "example": "2025-09-17"
+                },
+                "endDate": {
+                  "example": "2025-09-20"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Réservation créée",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "_id": { "type": "string", "example": "64f123abc1234def56789012" },
+                  "catwayNumber": { "type": "number", "example": 5 },
+                  "clientName": { "type": "string", "example": "John Doe" },
+                  "boatName": { "type": "string", "example": "Groeland" },
+                  "startDate": { "type": "string", "example": "2025-09-17" },
+                  "endDate": { "type": "string", "example": "2025-09-20" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requête invalide"
+          }
+        }
+      }
+    },
+    "/reservations/{id}/reservations/{idReservation}": {
+      "put": {
+        "summary": "Modifier une réservation",
+        "description": "Modifier les éléments d'une réservation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "numéro du catway"
+          },
+          {
+            "name": "idReservation",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID de la réservation à supprimer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Réservation modifiée avec succès",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "_id": { "type": "string", "example": "64f123abc1234def56789012" },
+                  "catwayNumber": { "type": "number", "example": 5 },
+                  "clientName": { "type": "string", "example": "John Din" },
+                  "boatName": { "type": "string", "example": "Groeland" },
+                  "startDate": { "type": "string", "example": "2025-09-18" },
+                  "endDate": { "type": "string", "example": "2025-09-20" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requête invalide"
+          },
+          "404": {
+            "description": "Réservation non trouvée"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Supprimer une réservation",
+        "description": "Supprimer une réservation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "number",
+            "description": "numéro du catway"
+          },
+          {
+            "name": "idReservation",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID de la réservation à supprimer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Réservation supprimée avec succès"
+          },
+          "404": {
+            "description": "Réservation non trouvée"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+
+    "/users": {
+      "get": {
+        "summary": "Récupérer tous les utilisateurs",
+        "description": "Retourner la liste complète de tous les utilisateurs",
+        "responses": {
+          "200": {
+            "description": "utilisateurs trouvés",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "_id": { "type": "string", "example": "64f123abc1234def56789012" },
+                  "username": { "type": "string", "example": "Arthur Favre" },
+                  "email": { "type": "string", "example": "arthurfavre@essai.com" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Créer un utilisateur",
+        "description": "Créer un nouvel utilisateur",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "password": { "type": "string", "example": "azerty123" },
+                "username": { "type": "string", "example": "Arthur Favre" },
+                "email": { "type": "string", "example": "arthurfavre@essai.com" }
+              },
+              "required": ["username", "email", "password"]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Utilisateur créé avec succès",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "_id": { "type": "string", "example": "64f123abc1234def56789012" },
+                  "username": { "type": "string", "example": "Arthur Favre" },
+                  "email": { "type": "string", "example": "arthurfavre@essai.com" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requête invalide"
+          }
+        }
+      }
+    },
+    "/users/{email}": {
+      "get": {
+        "summary":"Récupérer un utilisateur",
+        "description": "Récupérer un utilisateur par son email",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "email de l'utilisateur"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Utilisateur trouvé",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "_id": { "type": "string", "example": "64f123abc1234def56789012" },
+                  "username": { "type": "string", "example": "Arthur Favre" },
+                  "email": { "type": "string", "example": "arthurfavre@essai.com" }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Utilisateur non trouvé"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Modifier un utilisateur",
+        "description": "Modifier les informations d'un utilisateur",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "email de l'utilisateur"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "password": {
+                  "example": "azerty123"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Utilisateur modifié succès"
+          },
+          "400": {
+            "description": "Reqûete invalide"
+          },
+          "404": {
+            "description": "Utilisateur non trouvé"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Supprimer un utilisateur",
+        "description": "Supprimer un utilisateur",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "email de l'utilisateur"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Utilisateur supprimé avec succès"
+          },
+          "404": {
+            "description": "Utilisateur non trouvé"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+  }
+}

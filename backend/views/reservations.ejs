@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Liste des réservations</title>
-  <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
-  <%- include('partials/header') %>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Liste des réservations</title>
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <%- include('partials/header') %>
 
-  <h1>Réservations</h1>
+    <h1>Réservations</h1>
 
-  <div>
-    <h2>Rechercher une réservation</h2>
+    <div>
+      <h2>Rechercher une réservation</h2>
       <form>
-        <input type="text" id="searchReservation" placeholder="Prénom Nom">
+        <input type="text" id="searchReservation" placeholder="Prénom Nom" />
         <button id="searchBtn">Rechercher</button>
       </form>
-  </div>
+    </div>
 
-  <h2>Liste des réservations</h2>
-  <div>
-    <% if (reservations && reservations.length) { %>
+    <h2>Liste des réservations</h2>
+    <div>
+      <% if (reservations && reservations.length) { %>
       <table>
         <thead>
           <tr>
@@ -34,131 +34,138 @@
         </thead>
         <tbody>
           <% reservations.forEach(r => { %>
-            <tr data-id="<%= r._id %>">
-              <td><%= r.catwayNumber %></td>
-              <td><%= r.clientName %></td>
-              <td><%= r.boatName %></td>
-              <td><%= new Date(r.startDate).toLocaleDateString() %></td>
-              <td><%= new Date(r.endDate).toLocaleDateString() %></td>
-              <td>
-                <button class="editBtn">Modifier</button>
-                <button class="deleteBtn">Supprimer</button>
-              </td>
-            </tr>
+          <tr data-id="<%= r._id %>">
+            <td><%= r.catwayNumber %></td>
+            <td><%= r.clientName %></td>
+            <td><%= r.boatName %></td>
+            <td><%= new Date(r.startDate).toLocaleDateString() %></td>
+            <td><%= new Date(r.endDate).toLocaleDateString() %></td>
+            <td>
+              <button class="editBtn">Modifier</button>
+              <button class="deleteBtn">Supprimer</button>
+            </td>
+          </tr>
           <% }) %>
         </tbody>
       </table>
-    <% } else { %>
+      <% } else { %>
       <p>Aucune réservation pour le moment.</p>
-    <% } %>
-  </div>
+      <% } %>
+    </div>
 
-  <h2>Ajouter / Modifier une réservation</h2>
-  <form id="reservationForm">
-    <label>
-      Catway
-      <input type="number" name="catwayNumber" required>
-    </label>
-    <label>
-      Nom du client
-      <input type="text" name="clientName" required>
-    </label>
-    <label>
-      Nom du bateau
-      <input type="text" name="boatName" required>
-    </label>
-    <label>
-      Date début
-      <input type="date" name="startDate" required>
-    </label>
-    <label>
-      Date fin
-      <input type="date" name="endDate" required>
-    </label>
-    <button type="submit">Envoyer</button>
-  </form>
+    <h2>Ajouter / Modifier une réservation</h2>
+    <form id="reservationForm">
+      <label>
+        Catway
+        <input type="number" name="catwayNumber" required />
+      </label>
+      <label>
+        Nom du client
+        <input type="text" name="clientName" required />
+      </label>
+      <label>
+        Nom du bateau
+        <input type="text" name="boatName" required />
+      </label>
+      <label>
+        Date début
+        <input type="date" name="startDate" required />
+      </label>
+      <label>
+        Date fin
+        <input type="date" name="endDate" required />
+      </label>
+      <button type="submit">Envoyer</button>
+    </form>
 
-  <script>
+    <script>
+      const form = document.getElementById("reservationForm");
+      const table = document.querySelector("tbody");
 
-const form = document.getElementById('reservationForm');
-const table = document.querySelector('tbody');
+      const searchBtn = document.getElementById("searchBtn");
+      const searchInput = document.getElementById("searchReservation");
 
-const searchBtn = document.getElementById('searchBtn');
-const searchInput = document.getElementById('searchReservation');
-
-// Ajouter une réservation
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const data = Object.fromEntries(new FormData(form));
-      await fetch(`/catways/${data.catwayNumber}/reservations`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+      // Ajouter une réservation
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(form));
+        await fetch(`/catways/${data.catwayNumber}/reservations`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        location.reload();
       });
-      location.reload();
-    });
 
-  // Rechercher une réservation
-    searchBtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      const clientName = searchInput.value;
-      if(!clientName) return;
+      // Rechercher une réservation
+      searchBtn.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const clientName = searchInput.value;
+        if (!clientName) return;
 
-      try {
-        const res = await fetch(`/reservations/${encodeURIComponent(clientName)}`);
-        if (!res.ok) throw new Error('Client non trouvé');
-        const reservations = await res.json();
-        table.innerHTML = `<td>${reservations.catwayNumber} - ${reservations.clientName} - ${reservation.boatName} - 
+        try {
+          const res = await fetch(
+            `/reservations/${encodeURIComponent(clientName)}`
+          );
+          if (!res.ok) throw new Error("Client non trouvé");
+          const reservations = await res.json();
+          table.innerHTML = `<td>${reservations.catwayNumber} - ${
+            reservations.clientName
+          } - ${reservation.boatName} - 
         (${new Date(reservations.startDate).toLocaleDateString()} → 
         ${new Date(reservations.endDate).toLocaleDateString()})
         <button class="editBtn">Modifier</button>
         <button class="deleteBtn">Supprimer</button>
         </td>`;
-      } catch (err) {
-        table.innerHTML = `<p>${err.message}</p>`;
-      }
-    });
-
-
-// Supprimer une réservation
-table.addEventListener('click', async (e) => {
-  if (e.target.classList.contains('deleteBtn')) {
-    const id = e.target.closest('tr').dataset.id;
-    const catwayNumber = e.target.closest('tr').children[0].textContent;
-    await fetch(`/catways/${catwayNumber}/reservations/${id}`, { method: 'DELETE' });
-    location.reload();
-  }
-});
-
-// Modifier une réservation
-table.addEventListener('click', (e) => {
-  if (e.target.classList.contains('editBtn')) {
-    const tr = e.target.closest('tr');
-    const id = tr.dataset.id;
-    const catwayNumber = tr.dataset.catway;
-
-    form.catwayNumber.value = tr.children[0].textContent;
-    form.clientName.value = tr.children[1].textContent;
-    form.boatName.value = tr.children[2].textContent;
-    form.startDate.value = new Date(tr.children[3].textContent).toISOString().split('T')[0];
-    form.endDate.value = new Date(tr.children[4].textContent).toISOString().split('T')[0];
-
-    // Changer le submit pour faire un PUT
-    form.onsubmit = async (event) => {
-      event.preventDefault();
-      const data = Object.fromEntries(new FormData(form));
-      await fetch(`/catways/${catwayNumber}/reservations/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        } catch (err) {
+          table.innerHTML = `<p>${err.message}</p>`;
+        }
       });
-      location.reload();
-    };
-  }
-});
 
-  </script>
+      // Supprimer une réservation
+      table.addEventListener("click", async (e) => {
+        if (e.target.classList.contains("deleteBtn")) {
+          const id = e.target.closest("tr").dataset.id;
+          const catwayNumber = e.target.closest("tr").children[0].textContent;
+          await fetch(`/catways/${catwayNumber}/reservations/${id}`, {
+            method: "DELETE",
+          });
+          location.reload();
+        }
+      });
 
-  <%- include('partials/footer') %>
-</body>
+      // Modifier une réservation
+      table.addEventListener("click", (e) => {
+        if (e.target.classList.contains("editBtn")) {
+          const tr = e.target.closest("tr");
+          const id = tr.dataset.id;
+          const catwayNumber = tr.dataset.catway;
+
+          form.catwayNumber.value = tr.children[0].textContent;
+          form.clientName.value = tr.children[1].textContent;
+          form.boatName.value = tr.children[2].textContent;
+          form.startDate.value = new Date(tr.children[3].textContent)
+            .toISOString()
+            .split("T")[0];
+          form.endDate.value = new Date(tr.children[4].textContent)
+            .toISOString()
+            .split("T")[0];
+
+          // Changer le submit pour faire un PUT
+          form.onsubmit = async (event) => {
+            event.preventDefault();
+            const data = Object.fromEntries(new FormData(form));
+            await fetch(`/catways/${catwayNumber}/reservations/${id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data),
+            });
+            location.reload();
+          };
+        }
+      });
+    </script>
+
+    <%- include('partials/footer') %>
+  </body>
 </html>
