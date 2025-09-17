@@ -1,11 +1,11 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
   // On récupère le token depuis les cookies
   const token = req.cookies.token;
 
   if (!token) {
-    return res.redirect('/login'); // redirige vers login si pas de token
+    return res.redirect("/login"); // redirige vers login si pas de token
   }
 
   try {
@@ -14,7 +14,7 @@ const authMiddleware = (req, res, next) => {
     next();
   } catch (err) {
     res.clearCookie("token");
-    res.redirect('/login'); // redirige aussi si token invalide
+    res.redirect("/login"); // redirige aussi si token invalide
   }
 };
 

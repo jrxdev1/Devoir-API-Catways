@@ -3,7 +3,6 @@ const Name = require ('../models/User')
 
 
 // Récupérer toutes les réservations (tous les catways confondus)
-
 const getAllReservations = async (req, res) => {
   try {
     const reservations = await Reservation.find();
@@ -13,7 +12,7 @@ const getAllReservations = async (req, res) => {
   }
 };
 
-// Toutes les réservations d’un catway
+// Récupérer toutes les réservations d’un catway en particulier
 const getReservationsByCatway = async (req, res) => {
   try {
     const { id } = req.params;

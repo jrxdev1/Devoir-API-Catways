@@ -2,6 +2,7 @@ const Catway = require('../models/Catway');
 const Reservation = require('../models/Reservation');
 
 // API
+// Récupérer tous les catways
 const getCatways = async (req, res) => {
   try {
     const catways = await Catway.find();
@@ -11,6 +12,7 @@ const getCatways = async (req, res) => {
   }
 };
 
+// Récupérer un catway avec son numéro
 const getCatwayByNumber = async (req, res) => {
   try {
     const catway = await Catway.findOne({ catwayNumber: req.params.id });
@@ -21,6 +23,7 @@ const getCatwayByNumber = async (req, res) => {
   }
 };
 
+// Créer un catway
 const createCatway = async (req, res) => {
   try {
     const newCatway = new Catway(req.body);
@@ -31,6 +34,7 @@ const createCatway = async (req, res) => {
   }
 };
 
+// Modifier un catway
 const updateCatway = async (req, res) => {
   try {
     const updatedCatway = await Catway.findOneAndUpdate(
@@ -45,6 +49,7 @@ const updateCatway = async (req, res) => {
   }
 };
 
+// Supprimer un catway
 const deleteCatway = async (req, res) => {
   try {
     const deletedCatway = await Catway.findOneAndDelete({ catwayNumber: req.params.id });
